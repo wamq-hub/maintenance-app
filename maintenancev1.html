@@ -2137,7 +2137,6 @@ async function fetchLogoAsDataURL(src){
 }
 
 async function exportViaServer(){
-  // لازم يكون خادم Flask شغال على: http://localhost:5000/api/export-excel
   const latest = requests[requests.length - 1];
   if (!latest){
     alert('لا توجد طلبات في النظام لتوليد التقرير.');
