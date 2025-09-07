@@ -283,33 +283,34 @@ def health_check():
     })
 
 if __name__ == "__main__":
-    print("🚀 بدء تشغيل خادم تقارير الصيانة المحسن...")
+    import os
+
+    print("🚀 بدء تشغيل خادم تقارير الصيانة المحسّن...")
     print("📋 فحص المتطلبات...")
-    
-    # فحص المتطلبات
-    required_packages = ['openpyxl', 'flask', 'flask-cors']
-    missing_packages = []
-    
-    for package in required_packages:
+
+    # فحص المتطلبات (اختياري للتشخيص المحلي)
+    required_packages = ["openpyxl", "flask", "flask_cors", "PIL"]
+    missing = []
+    for pkg in required_packages:
         try:
-            __import__(package.replace('-', '_'))
-        except ImportError:
-            missing_packages.append(package)
-    
-    if missing_packages:
-        print(f"❌ مكتبات مفقودة: {', '.join(missing_packages)}")
-        print(f"👉 لتثبيت المكتبات: pip install {' '.join(missing_packages)}")
-    else:
-        print("✅ جميع المكتبات متوفرة")
-    
-    # فحص القالب
-    if check_template_permissions():
-        print("✅ ملف القالب متاح")
-    else:
-        print("❌ مشكلة في ملف القالب")
-        print("💡 تأكد من وجود ملف template.xlsx في نفس مجلد الخادم")
-    
-    print("🌐 الخادم يعمل على: http://localhost:5000")
-    print("🔍 للفحص: http://localhost:5000/api/health")
-    
-    app.run("0.0.0.0", 5000, debug=True)
+            __import__(pkg)
+        except Exception:
+            # اسم الحزمة قد يختلف عن اسم الموديل
+            pass
+
+    # فحص القالب (لو عندك الدالة)
+    try:
+        ok = check_template_permissions()
+        print("✅ ملف القالب متاح" if ok else "❌ مشكلة في ملف القالب")
+    except NameError:
+        # لو الدالة غير معرّفة تجاهل الفحص
+        pass
+
+    # مهم لــ Render: استخدم PORT من البيئة
+    port = int(os.environ.get("PORT", 5000))
+    host = "0.0.0.0"
+    print(f"🌐 الخادم يعمل على: http://{host}:{port}")
+    print("🔍 للفحص: /api/health")
+
+    # لا تستخدم debug=True في الإنتاج
+    app.run(host=host, port=port, debug=False)
