@@ -1007,8 +1007,6 @@ async function exportViaServer(){
 
 // دالة تصدير PDF عبر الخادم
 async function exportPDFViaServer(){
-// دالة تصدير PDF عبر الخادم
-async function exportPDFViaServer(){
   const latest = requests[requests.length - 1];
   if (!latest){
     alert('لا توجد طلبات في النظام لتوليد التقرير.');
@@ -1033,13 +1031,15 @@ async function exportPDFViaServer(){
     status: latest.status || '',
     status_date: latest?.supervisorReview?.gregorianDate || '',
     requester_name_2: latest.clientName || '',
-    is_fixed: latest?.clientEvaluation?.satisfaction === 'نعم' ? 'نعم' : latest?.clientEvaluation?.satisfaction === 'لا' ? 'لا' : '',
+    is_fixed: latest?.clientEvaluation?.satisfaction === 'نعم' ? 'نعم'
+            : latest?.clientEvaluation?.satisfaction === 'لا'  ? 'لا' : '',
     fixed_date: latest?.clientEvaluation?.gregorianDate || '',
     logo_data_url: logoDataUrl || null
   };
 
   try{
-    const res = await fetch('http://localhost:5000/api/export-pdf', {
+    const apiBase = (typeof config !== 'undefined' && config.apiBase) ? config.apiBase : '';
+    const res = await fetch(`${apiBase}/api/export-pdf`, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify(payload)
