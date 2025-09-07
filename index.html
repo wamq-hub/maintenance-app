@@ -2032,128 +2032,147 @@ if (userInfo && currentUserData && currentUserData.canChangePassword) {
 }
 
 </script>
+<!-- Config loader + server exports (نسخة نظيفة) -->
 <script>
-let config = {};
+  // اجعل config متاحًا عالميًا مرة واحدة فقط
+  window.config = window.config || {};
 
-fetch("config.json")
-  .then(res => res.json())
-  .then(data => {
-    config = data;
+  // حمّل config.json وعبّي الواجهة
+  (async function loadAndApplyConfig(){
+    try{
+      const res = await fetch("config.json", { cache: "no-cache" });
+      const data = await res.json();
+      window.config = data || {};
 
-    // 1. اسم الكلية في الترويسة
-    const collegeNameElement = document.querySelector('.college-info h1');
-    if (collegeNameElement && config.collegeName) {
-      collegeNameElement.textContent = config.collegeName;
+      // 1) اسم الكلية
+      const collegeNameElement = document.querySelector('.college-info h1');
+      if (collegeNameElement && config.collegeName) {
+        collegeNameElement.textContent = config.collegeName;
+      }
+
+      // 2) الشعار
+      const logoImg = document.querySelector('.college-logo');
+      if (logoImg && config.logoPath) {
+        logoImg.innerHTML = `<img src="${config.logoPath}" alt="الشعار" style="max-height:100px;">`;
+      }
+
+      // 3) Google Sheets حقول الربط الافتراضية
+      if (document.getElementById('sheetsId') && config.defaultSheetId) {
+        document.getElementById('sheetsId').value = config.defaultSheetId;
+      }
+      if (document.getElementById('sheetsApiKey') && config.defaultApiKey) {
+        document.getElementById('sheetsApiKey').value = config.defaultApiKey;
+      }
+
+      // 4) فوتر المطوّر
+      const developerFooter = document.querySelector('#developerFooter');
+      if (developerFooter && config.developer) {
+        developerFooter.textContent = `تطوير: ${config.developer}`;
+      }
+    }catch(err){
+      console.error("خطأ في تحميل config.json:", err);
+      alert("حدث خطأ أثناء تحميل الإعدادات:\n" + (err?.message || err));
     }
+  })();
 
-    // 2. اسم الشعار (اختياري لو عندك صورة شعار بدل 🎓)
-    const logoImg = document.querySelector('.college-logo');
-    if (logoImg && config.logoPath) {
-      logoImg.innerHTML = `<img src="${config.logoPath}" alt="الشعار" style="max-height:100px;">`;
+  // دالة مساعدة (لن تُستدعى هنا مباشرة—تُستخدم داخل الدوال async بالأسفل)
+  async function getLogoDataUrlIfAny(){
+    if (config && config.logoPath){
+      try{
+        // الدالة fetchLogoAsDataURL مُعرّفة مسبقًا في ملفك بالأعلى
+        return await fetchLogoAsDataURL(config.logoPath);
+      }catch{ return null; }
     }
+    return null;
+  }
 
-    // 3. تعبئة Google Sheets API ومفتاحه تلقائيًا
-    if (document.getElementById('sheetsId') && config.defaultSheetId) {
-      document.getElementById('sheetsId').value = config.defaultSheetId;
-    }
-    if (document.getElementById('sheetsApiKey') && config.defaultApiKey) {
-      document.getElementById('sheetsApiKey').value = config.defaultApiKey;
-    }
-
-    // 4. معلومات المطور أو ملاحظات (اختياري)
-    const developerFooter = document.querySelector('#developerFooter');
-    if (developerFooter && config.developer) {
-      developerFooter.textContent = `تطوير: ${config.developer}`;
-    }
-
-  }).catch(err => {
-  console.error("خطأ في توليد التقرير:", err);
-  alert("حدث خطأ أثناء توليد التقرير:\n" + (err?.message || err));
-});
-
-</script>
-<div id="developerFooter" style="text-align:center;color:#999;margin-top:30px;font-size:0.8rem"></div>
-<script>
-
-  // لو عندك مسار الشعار في config.logoPath:
-  const logoDataUrl = config?.logoPath ? await fetchLogoAsDataURL(config.logoPath) : null;
-
-  // تحضير الحقول المتوافقة مع CELL_MAP في الخادم:
-  const payload = {
-    request_id:       latest.number || String(latest.id).padStart(6,'0'),  // C8
-    maintenance_type: latest.problemType || '',                             // F8
-    location:         latest.building || '',                                // I8  👈 كنت تستخدم location بالخطأ في القالب
-    priority:         latest.maintenanceType || '',                         // D9
-    requester_name:   latest.clientName || '',                              // D11
-    request_time:     latest.time || '',                                    // D13
-    request_date:     latest.gregorianDate || '',                           // H13
-    fault_type:       latest.problemType || '',                             // C15
-    fault_desc:       latest.problemDescription || '',                      // A19
-    technician_name:  latest?.technicianReport?.techName || '',             // C25
-    execution_date:   latest?.technicianReport?.gregorianDate || '',        // H26
-    supervisor_name:  latest?.supervisorReview?.reviewerName || '',         // C29
-    status:           latest.status || '',                                  // C30
-    status_date:      latest?.supervisorReview?.gregorianDate || '',        // H31
-    requester_name_2: latest.clientName || '',                              // C34
-    is_fixed:         latest?.clientEvaluation?.satisfaction === 'نعم' ? 'نعم'
-                     : latest?.clientEvaluation?.satisfaction === 'لا'  ? 'لا' : '', // C35
-    fixed_date:       latest?.clientEvaluation?.gregorianDate || '',        // H36
-    logo_data_url:    logoDataUrl || null                                   // يُرسل للخادم
-  };
-
-  try{
-    const res = await fetch('https://maintenance-app-olxq.onrender.com/api/export-excel', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify(payload)
-});
-
-    if(!res.ok){
-      const err = await res.json().catch(()=>({error:'unknown'}));
-      alert('تعذر إنشاء التقرير عبر الخادم: ' + (err.error || res.status));
+  // —— تصدير Excel مباشرة عبر الخادم ——
+  async function exportExcelDirect() {
+    if (!requests.length) {
+      alert('لا توجد طلبات في النظام لتوليد التقرير.');
       return;
     }
 
-    const blob = await res.blob();
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url;
-    a.download = `تقرير_${payload.request_id}.xlsx`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  } catch(e){
-    alert('خطأ عند الاتصال بالخادم: ' + e.message);
-  }
-}
-  // ==== حفظ الطلب في Google Sheets (ورقة ثانية) ====
-async function saveRequestToSheet(request) {
-  try {
-    const resp = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        secret: APPS_SCRIPT_SECRET,   // تحقق من أن القيمة مطابقة للسكربت
-        spreadsheetId: sheets_id,     // معرف Google Sheet
-        sheetName: "طلبات الصيانة",   // اسم الورقة الثانية
-        request
-      })
-    });
+    const latest = requests[requests.length - 1];
+    const logoDataUrl = await getLogoDataUrlIfAny();
 
-    const data = await resp.json().catch(()=>({}));
-    if (!resp.ok || !data.ok) {
-      throw new Error(data.error || `HTTP ${resp.status}`);
+    const payload = {
+      request_id:       latest.number || String(latest.id).padStart(6,'0'),  // C8
+      maintenance_type: latest.problemType || '',                             // F8
+      location:         latest.building || '',                                // I8
+      priority:         latest.maintenanceType || '',                         // D9
+      requester_name:   latest.clientName || '',                              // D11
+      request_time:     latest.time || '',                                    // D13
+      request_date:     latest.gregorianDate || '',                           // H13
+      fault_type:       latest.problemType || '',                             // C15
+      fault_desc:       latest.problemDescription || '',                      // A19
+      technician_name:  latest?.technicianReport?.techName || '',             // C25
+      execution_date:   latest?.technicianReport?.gregorianDate || '',        // H26
+      supervisor_name:  latest?.supervisorReview?.reviewerName || '',         // C29
+      status:           latest.status || '',                                  // C30
+      status_date:      latest?.supervisorReview?.gregorianDate || '',        // H31
+      requester_name_2: latest.clientName || '',                              // C34
+      is_fixed:         latest?.clientEvaluation?.satisfaction === 'نعم' ? 'نعم'
+                       : latest?.clientEvaluation?.satisfaction === 'لا'  ? 'لا' : '', // C35
+      fixed_date:       latest?.clientEvaluation?.gregorianDate || '',        // H36
+      logo_data_url:    logoDataUrl || null
+    };
+
+    try {
+      // لو عندك config.apiBase استخدمه، وإلا العنوان الثابت
+      const apiBase = (config && config.apiBase) ? config.apiBase.replace(/\/+$/,'') : 'https://maintenance-app-olxq.onrender.com';
+      const res = await fetch(`${apiBase}/api/export-excel`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(()=>({error:'unknown'}));
+        alert('تعذر إنشاء التقرير عبر الخادم: ' + (err.error || res.status));
+        return;
+      }
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = `تقرير_${payload.request_id}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch(e) {
+      alert('خطأ عند الاتصال بالخادم: ' + e.message);
     }
-
-    console.log("✅ تم حفظ الطلب في Google Sheet:", data);
-  } catch (err) {
-    console.error("❌ فشل حفظ الطلب في الشيت:", err);
   }
-}
+  window.exportExcelDirect = exportExcelDirect; // للتشغيل من الأزرار
 
+  // —— حفظ الطلب في Google Sheets ——
+  async function saveRequestToSheet(request) {
+    try {
+      const resp = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          secret: APPS_SCRIPT_SECRET,   // يطابق سكربت Apps Script
+          spreadsheetId: sheets_id,     // Sheet ID من شاشة الربط/الـlocalStorage
+          sheetName: "طلبات الصيانة",   // اسم الورقة
+          request
+        })
+      });
+
+      const data = await resp.json().catch(()=>({}));
+      if (!resp.ok || !data.ok) {
+        throw new Error(data.error || `HTTP ${resp.status}`);
+      }
+      console.log("✅ تم حفظ الطلب في Google Sheet:", data);
+    } catch (err) {
+      console.error("❌ فشل حفظ الطلب في الشيت:", err);
+    }
+  }
+  window.saveRequestToSheet = saveRequestToSheet; // تُستدعى عند إرسال الطلب
 </script>
-
 
 </body>
 </html>
