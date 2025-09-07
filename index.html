@@ -585,23 +585,39 @@ function handleLogin() {
   alert('بيانات تسجيل الدخول غير صحيحة أو لم يتم ربط Google Sheets');
 }
 
+function findUserById(id){
+  try{
+    const list = JSON.parse(localStorage.getItem('sheetsUserData') || '[]');
+    return list.find(u => String(u.employeeId).trim() === String(id).trim());
+  }catch{ return null; }
+}
+
 function loginUser(username, type, name) {
   currentUser = username;
   userType = type;
 
-  localStorage.setItem('currentUser', JSON.stringify({ username, type, name }));
+  // ✅ عَبِّ currentUserData حتى مع الدخول التلقائي
+  const fromSheet = findUserById(username);
+  currentUserData = fromSheet || {
+    employeeId: username,
+    name: name || username,
+    role: type,
+    canChangePassword: false
+  };
+
+  localStorage.setItem('currentUser', JSON.stringify({ username, type, name: currentUserData.name }));
 
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('userInfoBar').style.display = 'flex';
-  document.getElementById('currentUser').textContent = `${name} (${getUserTypeArabic(type)})`;
+  document.getElementById('currentUser').textContent = `${currentUserData.name} (${getUserTypeArabic(type)})`;
   document.querySelector('.container').style.display = 'block';
 
   setupUserInterface(type);
-
   updateDateTime();
   updateRequestNumber();
   updateAllDisplays();
 }
+
 
 function logout() { 
   localStorage.removeItem('currentUser'); 
