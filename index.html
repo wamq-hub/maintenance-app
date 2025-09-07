@@ -968,7 +968,7 @@ async function exportViaServer(){
     };
     
     try {
-      const apiBase = (typeof config !== 'undefined' && config.apiBase) ? config.apiBase : '';
+      const apiBase = (typeof config !== 'undefined' && config.apiBase) ? config.apiBase.replace(/\/+$/,'') : '';
       const res = await fetch(`${apiBase}/api/export-excel`, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -1064,7 +1064,6 @@ async function exportPDFViaServer(){
   } catch(e){
     alert('خطأ عند الاتصال بالخادم: ' + e.message);
   }
-}
 }
 // دالة مساعدة لتحميل الشعار
 async function fetchLogoAsDataURL(src){
@@ -2069,53 +2068,6 @@ fetch("config.json")
   alert("حدث خطأ أثناء توليد التقرير:\n" + (err?.message || err));
 });
 
-</script>
-<script>
-async function generateExcelFromTemplate() {
-  try {
-    const templatePath = config.reportTemplate || "template.xlsx";
-
-    const response = await fetch(templatePath);
-    const arrayBuffer = await response.arrayBuffer();
-
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    const sheetName = workbook.SheetNames[0];
-    const ws = workbook.Sheets[sheetName];
-
-    // ✅ مثال تعبئة بيانات الطلب الحالي (أول طلب مثلاً):
-    const latest = requests[requests.length - 1];
-    if (!latest) {
-      alert("لا توجد بيانات طلب لتعبئتها في التقرير");
-      return;
-    }
-
-    // 🎯 أدخل هنا الخلايا المستهدفة حسب القالب
-    ws["C10"] = ws["C10"] || {};
-    ws["C10"].t = "s";
-    ws["C10"].v = latest.number;
-
-    ws["F10"] = ws["F10"] || {};
-    ws["F10"].t = "s";
-    ws["F10"].v = latest.problemType;
-
-    ws["I10"] = ws["I10"] || {};
-    ws["I10"].t = "s";
-    ws["I10"].v = latest.building || "غير محدد";
-    const newFileName = `تقرير_طلب_${latest.number}.xlsx`;
-    XLSX.writeFile(workbook, newFileName);
-
-    showModal(`
-      <div style="text-align:center;padding:20px">
-        <div style="font-size:4rem;color:#43e97b;margin-bottom:20px">✅</div>
-        <h3 style="color:#43e97b;margin-bottom:15px">تم إنشاء التقرير!</h3>
-        <p style="color:#666">تم حفظ الملف: ${newFileName}</p>
-      </div>
-    `);
-  } catch (err) {
-    console.error("خطأ في توليد التقرير:", err);
-    alert("حدث خطأ أثناء توليد التقرير. يرجى التحقق من ملف القالب.");
-  }
-}
 </script>
 <div id="developerFooter" style="text-align:center;color:#999;margin-top:30px;font-size:0.8rem"></div>
 <script>
