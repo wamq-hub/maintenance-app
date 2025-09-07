@@ -4,7 +4,7 @@
   "reportTemplate": "template.xlsx",
   "apiBase": "https://maintenance-app-olxq.onrender.com",
   "defaultSheetId": "1U78Zgj5y-ay-MQAoN4ZqSzPcywp-rPRxft4DuOdmipQ",
-  "defaultApiKey": "AIzaSyCwZ_xxx",
+  "defaultApiKey": "AIzaSyCwZ_MetFoLWkrXMAD2UlF8OTUYaynbYXg",
   "developer": "م. فهد صالح - وكيل ضبط الجودة",
   "version": "2.0",
   "lastUpdated": "2025-01-01",
@@ -26,3 +26,4 @@
     "watermark": "سري - للاستخدام الداخلي فقط"
   }
 }
+
