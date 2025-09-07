@@ -16,6 +16,11 @@ import tempfile
 app = Flask(__name__)
 from flask_cors import CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+@app.route("/api/health")
+def health():
+    return {"ok": True, "message": "up"}
+
+
 
 TEMPLATE_PATH = "template.xlsx"
 DEFAULT_LOGO = "assets/logo.png"
@@ -315,5 +320,6 @@ if __name__ == "__main__":
 
     # لا تستخدم debug=True في الإنتاج
     app.run(host=host, port=port, debug=False)
+
 
 
