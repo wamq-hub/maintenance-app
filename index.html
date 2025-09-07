@@ -1336,7 +1336,11 @@ function displayTechnicianRequests(){
       ['جديد','قيد المعالجة','جاري الإصلاح','بانتظار اعتماد المشرف'].includes(r.status)
     );
   }
-  
+
+  // ✅ جهّز اسم الفني الافتراضي هنا (خارج الـHTML)
+  const savedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const defaultTechName = (currentUserData?.name || savedUser.name || '').trim();
+
   if (!relevant.length){ 
     container.innerHTML = emptyMsg('لا توجد طلبات جديدة حالياً'); 
     return; 
@@ -1367,7 +1371,12 @@ function displayTechnicianRequests(){
       ` : `
         <div style="margin-top:20px" class="no-print">
           <label for="techName${r.id}">اسم الفني:</label>
-          <input type="text" id="techName${r.id}" value="${currentUserData?.name || ''}" readonly style="margin:10px 0">
+          <input type="text"
+                 id="techName${r.id}"
+                 value="${defaultTechName}"
+                 ${userType === 'technician' ? 'readonly' : ''}
+                 style="margin:10px 0">
+          
           <select id="techStatus${r.id}" style="margin:10px 0">
             <option value="قيد المعالجة">قيد المعالجة</option>
             <option value="جاري الإصلاح">جاري الإصلاح</option>
@@ -1382,6 +1391,7 @@ function displayTechnicianRequests(){
     </div>
   `).join('');
 }
+
 
 function displaySupervisorRequests(){
   const container = document.getElementById('supervisorRequests'); 
@@ -1501,17 +1511,23 @@ function submitTechnicianReport(id){
     alert('يسمح فقط للفني أو الإداريين بتسليم تقرير فني');
     return;
   }
-  
   const r = requests.find(x => x.id === id);
   if (!r) return;
-  
-  const techName = document.getElementById(`techName${id}`).value.trim();
+
+  const savedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const techName = (
+    document.getElementById(`techName${id}`)?.value ||
+    currentUserData?.name ||
+    savedUser.name ||
+    ''
+  ).trim();
+
   const techStatus = document.getElementById(`techStatus${id}`).value;
   const techNotes = document.getElementById(`techNotes${id}`).value.trim();
 
-  if (!techName){ 
-    alert('يرجى إدخال اسم الفني'); 
-    return; 
+  if (!techName){
+    alert('يرجى إدخال اسم الفني');
+    return;
   }
 
   const now = new Date();
