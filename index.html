@@ -8,6 +8,14 @@
 /* === Reset & Base === */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Arial','Tahoma',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;line-height:1.6}
+  
+
+<script>
+function onReady(fn){
+  if (document.readyState !== 'loading') fn();
+  else document.addEventListener('DOMContentLoaded', fn, { once: true });
+}
+</script>
 
 /* Login */
 .login-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);z-index:1000;display:flex;justify-content:center;align-items:center;padding:20px}
@@ -541,6 +549,15 @@ document.addEventListener('DOMContentLoaded', () => {
   updateRequestNumber();
   setInterval(updateDateTime, 1000);
 
+  });
+
+function updateDateTime(){
+  const gEl = document.getElementById('gregorianDate'); if (gEl) gEl.textContent = /*...*/;
+  const hEl = document.getElementById('hijriDate');     if (hEl) hEl.textContent = /*...*/;
+  const dEl = document.getElementById('dayName');       if (dEl) dEl.textContent = /*...*/;
+  const tEl = document.getElementById('currentTime');   if (tEl) tEl.textContent = /*...*/;
+}
+
   // تسجيل الدخول
   document.getElementById('loginForm').addEventListener('submit', e => { 
     e.preventDefault(); 
@@ -567,7 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // تحديث تاريخ الطباعة
-  document.getElementById('printDate').textContent = new Date().toLocaleDateString('ar-SA');
+  function generatePDFReport(){
+  const pd = document.getElementById('printDate');
+  if (pd) pd.textContent = new Date().toLocaleDateString('ar-SA');
 });
 
 /* ====== Auth ====== */
@@ -593,8 +612,9 @@ function findUserById(id){
 }
 
 function loginUser(username, type, name) {
-  currentUser = username;
-  userType = type;
+  let currentUser = null;           // ← أضيفت
+  let userType = null;              // ← أضيفت
+  let currentUserData = null;       // ← أضيفت
 
   // ✅ عَبِّ currentUserData حتى مع الدخول التلقائي
   const fromSheet = findUserById(username);
@@ -729,7 +749,7 @@ async function submitMaintenanceRequest(){
   document.getElementById('maintenanceForm').reset();
   const otherGroup = document.getElementById('otherProblemGroup'); 
   if (otherGroup) otherGroup.style.display = 'none';
-  updateRequestNumber();
+ if (document.getElementById('requestNumber')) updateRequestNumber();
 
   showModal(`
     <div style="text-align:center;padding:20px">
@@ -749,7 +769,9 @@ async function submitMaintenanceRequest(){
 function generatePDFReport() {
   try {
     // تحديث تاريخ التقرير
-    document.getElementById('printDate').textContent = new Date().toLocaleDateString('ar-SA');
+    function generatePDFReport(){
+  const pd = document.getElementById('printDate');
+  if (pd) pd.textContent = new Date().toLocaleDateString('ar-SA');
     
     // إنشاء محتوى PDF محسن
     createEnhancedReportContent();
@@ -2070,11 +2092,11 @@ if (userInfo && currentUserData && currentUserData.canChangePassword) {
   window.config = window.config || {};
 
   // حمّل config.json وعبّي الواجهة
-  (async function loadAndApplyConfig(){
-    try{
-      const res = await fetch("config.json", { cache: "no-cache" });
-      const data = await res.json();
-      window.config = data || {};
+(async function loadAndApplyConfig(){
+  try{
+    const res = await fetch("config.json", { cache: "no-cache" });
+    const data = await res.json();
+    window.config = data || {};
 
       // 1) اسم الكلية
       const collegeNameElement = document.querySelector('.college-info h1');
@@ -2101,11 +2123,11 @@ if (userInfo && currentUserData && currentUserData.canChangePassword) {
       if (developerFooter && config.developer) {
         developerFooter.textContent = `تطوير: ${config.developer}`;
       }
-    }catch(err){
-      console.error("خطأ في تحميل config.json:", err);
-      alert("حدث خطأ أثناء تحميل الإعدادات:\n" + (err?.message || err));
-    }
-  })();
+      }catch(err){
+        console.error("خطأ في تحميل config.json:", err);
+        alert("حدث خطأ أثناء تحميل الإعدادات:\n" + (err?.message || err));
+      }
+    })();
 
   // دالة مساعدة (لن تُستدعى هنا مباشرة—تُستخدم داخل الدوال async بالأسفل)
   async function getLogoDataUrlIfAny(){
