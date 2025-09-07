@@ -2,6 +2,7 @@
   "collegeName": "الكلية التقنية بحقل",
   "logoPath": "assets/logo.png",
   "reportTemplate": "template.xlsx",
+  "apiBase": "https://maintenance-app-olxq.onrender.com"
   "defaultSheetId": "1U78Zgj5y-ay-MQAoN4ZqSzPcywp-rPRxft4DuOdmipQ",
   "defaultApiKey": "AIzaSyCwZ_xxx",
   "developer": "م. فهد صالح - وكيل ضبط الجودة",
@@ -24,4 +25,5 @@
     "includeSignatures": true,
     "watermark": "سري - للاستخدام الداخلي فقط"
   }
+
 }
