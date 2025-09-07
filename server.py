@@ -14,6 +14,8 @@ from datetime import datetime
 import tempfile
 
 app = Flask(__name__)
+from flask_cors import CORS
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 CORS(app)
 
 TEMPLATE_PATH = "template.xlsx"
@@ -314,3 +316,4 @@ if __name__ == "__main__":
 
     # لا تستخدم debug=True في الإنتاج
     app.run(host=host, port=port, debug=False)
+
