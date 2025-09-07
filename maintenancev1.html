@@ -963,16 +963,18 @@ async function exportViaServer(){
     requester_name_2: latest.clientName || '',
     is_fixed:         latest?.clientEvaluation?.satisfaction === 'نعم' ? 'نعم'
                      : latest?.clientEvaluation?.satisfaction === 'لا'  ? 'لا' : '',
-    fixed_date:       latest?.clientEvaluation?.gregorianDate || '',
-    logo_data_url:    logoDataUrl || null
-  };
+    fixed_date: latest?.clientEvaluation?.gregorianDate || '',
+    logo_data_url: logoDataUrl || null
+    };
+    
+    try {
+      const apiBase = (typeof config !== 'undefined' && config.apiBase) ? config.apiBase : '';
+      const res = await fetch(`${apiBase}/api/export-excel`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
 
-  try{
-    const res = await fetch('http://localhost:5000/api/export-excel', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
 
     if(!res.ok){
       const err = await res.json().catch(()=>({error:'unknown'}));
