@@ -251,10 +251,12 @@ textarea{min-height:120px;resize:vertical}
     <form id="maintenanceForm">
       <div class="datetime-display">
         <strong>رقم الطلب:</strong> <span id="requestNumber"></span> |
-        <strong>التاريخ الهجري:</strong> <span id="gregorianDate"></span> |
+        <strong>التاريخ الميلادي:</strong> <span id="gregorianDate"></span> |
         <strong>اليوم:</strong> <span id="dayName"></span> |
-        <strong>الوقت:</strong> <span id="currentTime"></span>
+        <strong>الوقت:</strong> <span id="currentTime"></span> |
+        <strong>التاريخ الهجري:</strong> <span id="hijriDate"></span>
       </div>
+
 
       <div class="form-row">
         <div class="form-col">
@@ -1768,7 +1770,7 @@ function changePassword() {
 
 // ==== إعدادات الويب-آب (Apps Script) ====
 // غيّر فقط الرابط أو السر عند الحاجة
-const APPS_SCRIPT_URL    = 'https://script.google.com/macros/s/AKfycbwrB9yL_WyJV4nzTM2X6Tl_k9h0t-sbQ7ockZ5qX9oakRzdbPNIRWyuGOvPsbMfu9go/exec';
+const APPS_SCRIPT_URL    = 'https://script.google.com/macros/s/AKfycbzwqWPQu6atWuYG51A8wToIixMn9TdLou6KkvhnAmietVPi9tXFnmz6jdJZ_ZfKRAL7/exec';
 const APPS_SCRIPT_SECRET = '1193';
 const SHEET_NAME         = 'بيانات موظفي نظام الصيانة'; // عدّل الاسم لو ورقتك مختلفة
 
@@ -2072,29 +2074,6 @@ fetch("config.json")
 </script>
 <div id="developerFooter" style="text-align:center;color:#999;margin-top:30px;font-size:0.8rem"></div>
 <script>
-async function fetchLogoAsDataURL(src){
-  try{
-    const resp = await fetch(src, {cache:'reload'});
-    if(!resp.ok) return null;
-    const blob = await resp.blob();
-    return await new Promise((resolve, reject) => {
-      const fr = new FileReader();
-      fr.onload = () => resolve(fr.result);
-      fr.onerror = reject;
-      fr.readAsDataURL(blob);
-    });
-  }catch(e){
-    console.error('فشل تحميل الشعار:', e);
-    return null;
-  }
-}
-
-async function exportViaServer(){
-  const latest = requests[requests.length - 1];
-  if (!latest){
-    alert('لا توجد طلبات في النظام لتوليد التقرير.');
-    return;
-  }
 
   // لو عندك مسار الشعار في config.logoPath:
   const logoDataUrl = config?.logoPath ? await fetchLogoAsDataURL(config.logoPath) : null;
@@ -2148,6 +2127,31 @@ async function exportViaServer(){
     alert('خطأ عند الاتصال بالخادم: ' + e.message);
   }
 }
+  // ==== حفظ الطلب في Google Sheets (ورقة ثانية) ====
+async function saveRequestToSheet(request) {
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: APPS_SCRIPT_SECRET,   // تحقق من أن القيمة مطابقة للسكربت
+        spreadsheetId: sheets_id,     // معرف Google Sheet
+        sheetName: "طلبات الصيانة",   // اسم الورقة الثانية
+        request
+      })
+    });
+
+    const data = await resp.json().catch(()=>({}));
+    if (!resp.ok || !data.ok) {
+      throw new Error(data.error || `HTTP ${resp.status}`);
+    }
+
+    console.log("✅ تم حفظ الطلب في Google Sheet:", data);
+  } catch (err) {
+    console.error("❌ فشل حفظ الطلب في الشيت:", err);
+  }
+}
+
 </script>
 
 
