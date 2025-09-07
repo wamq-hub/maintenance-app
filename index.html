@@ -666,7 +666,7 @@ function updateRequestNumber(){
 }
 
 /* ====== Submit New Request ====== */
-function submitMaintenanceRequest(){
+async function submitMaintenanceRequest(){
   if (!['quality','dean','supervisor','employee'].includes(userType)) { 
     alert('ليس لديك صلاحية لإنشاء طلبات صيانة'); 
     return; 
@@ -705,6 +705,9 @@ function submitMaintenanceRequest(){
   requestCounter++;
   localStorage.setItem('maintenanceRequests', JSON.stringify(requests));
   localStorage.setItem('requestCounter', String(requestCounter));
+  // حفظ نسخة من الطلب في Google Sheets
+  saveRequestToSheet(request);
+  await saveRequestToSheet(request);
 
   document.getElementById('maintenanceForm').reset();
   const otherGroup = document.getElementById('otherProblemGroup'); 
