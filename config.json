@@ -1,0 +1,27 @@
+{
+  "collegeName": "الكلية التقنية بحقل",
+  "logoPath": "assets/logo.png",
+  "reportTemplate": "template.xlsx",
+  "defaultSheetId": "1U78Zgj5y-ay-MQAoN4ZqSzPcywp-rPRxft4DuOdmipQ",
+  "defaultApiKey": "AIzaSyCwZ_xxx",
+  "developer": "م. فهد صالح - وكيل ضبط الجودة",
+  "version": "2.0",
+  "lastUpdated": "2025-01-01",
+  "features": {
+    "pdfReports": true,
+    "excelReports": true,
+    "emailNotifications": false,
+    "smsNotifications": false
+  },
+  "ui": {
+    "theme": "default",
+    "language": "ar",
+    "dateFormat": "hijri-gregorian"
+  },
+  "reports": {
+    "includeStats": true,
+    "includeCharts": false,
+    "includeSignatures": true,
+    "watermark": "سري - للاستخدام الداخلي فقط"
+  }
+}
