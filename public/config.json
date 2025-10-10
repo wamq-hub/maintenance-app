@@ -1,0 +1,153 @@
+{
+  "systemInfo": {
+    "name": "نظام إدارة الصيانة",
+    "version": "1.0.0",
+    "developer": "م. فهد صالح - وكيل ضبط الجودة",
+    "lastUpdated": "2025-10-03"
+  },
+  
+  "googleSheets": {
+    "enabled": true,
+    "appsScriptUrl": "https://script.google.com/macros/s/AKfycbzd99tet-nXzhSWSe7GmelcfSercL8HC06vRtEAPfmFo5SorgpZMbdbnSnRe3C-mjo/exec",
+    "autoSync": true,
+    "syncInterval": 30000,
+    "usersSheetName": "المستخدمين",
+    "requestsSheetName": "الطلبات"
+  },
+  
+  "theme": {
+    "primaryColor": "#667eea",
+    "secondaryColor": "#764ba2",
+    "gradientStart": "#667eea",
+    "gradientEnd": "#764ba2",
+    "successColor": "#27ae60",
+    "errorColor": "#e74c3c",
+    "warningColor": "#f39c12"
+  },
+  
+  "features": {
+    "imageUpload": true,
+    "maxImageSize": 2097152,
+    "allowedImageTypes": ["image/jpeg", "image/png", "image/gif"],
+    "pdfExport": true,
+    "excelExport": true,
+    "autoBackup": true,
+    "emailNotifications": false
+  },
+  
+  "organization": {
+    "name": "الكلية التقنية",
+    "logo": "assets/logo.png",
+    "address": "المملكة العربية السعودية",
+    "phone": "+966-XX-XXX-XXXX",
+    "email": "info@college.edu.sa"
+  },
+  
+  "maintenance": {
+    "requestTypes": ["الكتروني", "هاتف", "ايميل"],
+    "maintenanceTypes": ["صيانة طارئة", "صيانة وقائية", "صيانة دورية"],
+    "faultTypes": ["كهربائي", "تكييف", "سباكة", "الكترونيات", "أخرى"],
+    "workStatuses": ["تم الإصلاح", "جاري الإصلاح", "تحت المعالجة", "يحتاج قطع غيار"],
+    "supervisorDecisions": ["معتمد", "مرفوض", "يحتاج مراجعة"],
+    "satisfactionLevels": [
+      { "value": "ممتاز", "label": "ممتاز ⭐⭐⭐⭐⭐" },
+      { "value": "جيد جداً", "label": "جيد جداً ⭐⭐⭐⭐" },
+      { "value": "جيد", "label": "جيد ⭐⭐⭐" },
+      { "value": "مقبول", "label": "مقبول ⭐⭐" },
+      { "value": "ضعيف", "label": "ضعيف ⭐" }
+    ]
+  },
+  
+  "roles": {
+    "QUALITY_MANAGER": {
+      "name": "وكيل ضبط الجودة",
+      "permissions": ["all"]
+    },
+    "SUPERVISOR": {
+      "name": "مشرف الصيانة",
+      "permissions": ["new-request", "supervisor-review", "quality-report"]
+    },
+    "TECHNICIAN": {
+      "name": "فني الصيانة",
+      "permissions": ["technician-report"]
+    },
+    "EMPLOYEE": {
+      "name": "موظف",
+      "permissions": ["new-request", "client-feedback"]
+    },
+    "DEAN": {
+      "name": "العميد",
+      "permissions": ["all"]
+    }
+  },
+  
+  "localStorage": {
+    "enabled": true,
+    "autoSave": true,
+    "autoSaveInterval": 30000,
+    "storageKeys": {
+      "requests": "maintenanceRequests",
+      "currentUser": "currentUser",
+      "config": "systemConfig"
+    }
+  },
+  
+  "ui": {
+    "language": "ar",
+    "direction": "rtl",
+    "dateFormat": "DD/MM/YYYY",
+    "timeFormat": "12h",
+    "showHijriDate": true,
+    "itemsPerPage": 10,
+    "showLoadingScreen": true
+  },
+  
+"reports": {
+  "excelFileName": "تقرير_الصيانة",
+  "includeLogo": true,
+  "includeStatistics": true,
+  "includeCharts": false,
+  "pageSize": "A4",
+  "pageOrientation": "landscape",
+  "includeImagesInExcel": false
+}
+
+,
+  
+  "validation": {
+    "requestIdLength": 6,
+    "minDescriptionLength": 10,
+    "maxDescriptionLength": 500,
+    "requiredFields": [
+      "requestType",
+      "building",
+      "maintenanceType",
+      "requesterName",
+      "faultType",
+      "faultDescription"
+    ]
+  },
+  
+  "notifications": {
+    "showSuccessMessages": true,
+    "showErrorMessages": true,
+    "messageDuration": 5000,
+    "soundEnabled": false
+  },
+  
+  "security": {
+    "sessionTimeout": 28800000,
+    "rememberLogin": true,
+    "requireStrongPassword": false,
+    "minPasswordLength": 6,
+    "maxLoginAttempts": 5
+  },
+  
+  "advanced": {
+    "debugMode": false,
+    "logErrors": true,
+    "cacheEnabled": true,
+    "compressionEnabled": false,
+    "offlineMode": true
+  }
+}

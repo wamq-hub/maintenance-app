@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام إدارة الصيانة والسلامة - الرئيسية</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* TVTC Brand Colors */
+  --tvtc-primary: #006341;
+  --tvtc-secondary: #C8A55C;
+  --tvtc-primary-700: #004d32;
+  --tvtc-primary-100: #E6F1EC;
+  --tvtc-accent: #00A287;
+  
+  /* Text Colors */
+  --tvtc-text: #1F2937;
+  --tvtc-text-muted: #6B7280;
+  
+  /* Status Colors */
+  --success: #1E7F5C;
+  --warning: #C38E00;
+  --error: #C0392B;
+  --info: #2563EB;
+  
+  /* Surface Colors */
+  --border: #E5E7EB;
+  --card: #FFFFFF;
+  --surface: #F7FAF9;
+}
+
+
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, var(--tvtc-primary) 0%, var(--tvtc-secondary) 100%);
+  min-height: 100vh;
+  direction: rtl;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+  color: white;
+  margin-bottom: 50px;
+  animation: fadeInDown 0.8s ease;
+}
+
+.header h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.header p {
+  font-size: 1.3rem;
+  opacity: 0.95;
+}
+
+.logo {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+.systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.system-card {
+  background: var(--card);
+  padding: 50px 40px;
+  border-radius: 25px;
+  box-shadow: 0 20px 60px rgba(0, 99, 65, 0.2);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease;
+}
+
+.system-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+    background: linear-gradient(135deg, var(--tvtc-primary) 0%, var(--tvtc-secondary) 100%);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.system-card:hover::before {
+  transform: scaleX(1);
+}
+
+.system-card:hover {
+  transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(0, 99, 65, 0.3);
+
+}
+
+.system-card:active {
+  transform: translateY(-10px) scale(0.98);
+}
+
+
+
+.system-card:focus-within {
+  outline: 3px solid var(--tvtc-primary);
+  outline-offset: 5px;
+}
+
+
+
+.system-card:hover h2 {
+  color: var(--tvtc-primary-700);
+}
+
+.system-features li {
+  color: var(--tvtc-text);
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  padding-right: 25px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.system-features li:hover {
+  color: var(--tvtc-primary);
+}
+
+.system-icon {
+  font-size: 5rem;
+  margin-bottom: 25px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.system-card h2 {
+  color: var(--tvtc-primary);
+  font-size: 2rem;
+  margin-bottom: 15px;
+  transition: color 0.3s ease;
+}
+
+.system-card p {
+    color: var(--tvtc-text-muted);
+
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.system-features {
+  text-align: right;
+  margin-top: 20px;
+  padding-top: 20px;
+    border-top: 2px solid var(--border);
+
+}
+
+.system-features ul {
+  list-style: none;
+}
+
+
+.system-features li::before {
+  content: '✓';
+  position: absolute;
+  right: 0;
+    color: var(--success);
+
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.btn-enter {
+  display: inline-block;
+  padding: 15px 40px;
+    background: linear-gradient(135deg, var(--tvtc-primary) 0%, var(--tvtc-secondary) 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 99, 65, 0.3);
+
+}
+
+
+
+.btn-enter:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 99, 65, 0.3);
+}
+
+.btn-enter:focus {
+  outline: 3px solid var(--tvtc-primary-100);
+  outline-offset: 3px;
+}
+
+.btn-enter:hover {
+    box-shadow: 0 6px 25px rgba(0, 99, 65, 0.4);
+
+  transform: translateY(-2px);
+}
+
+.footer {
+  text-align: center;
+  color: white;
+  padding: 40px 30px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 25px;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1s ease 0.5s both;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  animation: pulse 2s infinite;
+}
+
+.footer-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.footer-department {
+  font-size: 1.2rem;
+  opacity: 0.95;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.footer-divider {
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, white, transparent);
+  margin: 20px auto;
+  border-radius: 3px;
+}
+
+.footer-description {
+  font-size: 1.05rem;
+  opacity: 0.9;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.footer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(5px);
+}
+
+.footer-dev {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.footer-position {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.footer-year {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 30px 20px;
+  }
+  
+  .footer-title {
+    font-size: 1.4rem;
+  }
+  
+  .footer-department {
+    font-size: 1rem;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+.system-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.system-card:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .header p {
+    font-size: 1rem;
+  }
+  
+  .systems-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .system-card {
+    padding: 40px 30px;
+  }
+  
+  .system-icon {
+    font-size: 4rem;
+  }
+  
+  .system-card h2 {
+    font-size: 1.6rem;
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Loading animation on page load */
+body {
+  animation: pageLoad 0.5s ease;
+}
+
+@keyframes pageLoad {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">🏢</div>
+    <h1>مرحباً بك في نظام الإدارة الموحد</h1>
+    <p>اختر النظام المناسب لاحتياجاتك</p>
+  </div>
+
+  <div class="systems-grid">
+    <!-- Maintenance System Card -->
+    <div class="system-card" onclick="window.location.href='maintenance.html'">
+      <div class="system-icon">🔧</div>
+      <h2>نظام إدارة الصيانة</h2>
+      <p>نظام شامل لإدارة جميع طلبات الصيانة والأعطال</p>
+      
+      <div class="system-features">
+        <ul>
+          <li>إرسال طلبات صيانة جديدة</li>
+          <li>تقارير فنية تفصيلية</li>
+          <li>مراجعة واعتماد المشرف</li>
+          <li>تقييم العميل للخدمة</li>
+          <li>تقارير الجودة والإحصائيات</li>
+          <li>تصدير Excel وPDF</li>
+          <li>مزامنة مع Google Sheets</li>
+        </ul>
+      </div>
+      
+      <a href="maintenance.html" class="btn-enter" onclick="event.stopPropagation()">دخول نظام الصيانة</a>
+    </div>
+
+    <!-- Safety System Card -->
+    <div class="system-card" onclick="window.location.href='safety_system.html'">
+      <div class="system-icon">🦺</div>
+      <h2>نظام السلامة والصحة المهنية</h2>
+      <p>نظام متكامل لإدارة طلبات السلامة والصحة المهنية</p>
+      
+      <div class="system-features">
+        <ul>
+          <li>إرسال بلاغات السلامة</li>
+          <li>مراجعة موظف السلامة</li>
+          <li>اعتماد المشرف المسؤول</li>
+          <li>تقارير الفني المتخصص</li>
+          <li>مراجعة مشرف السلامة</li>
+          <li>متابعة مسار البلاغ</li>
+          <li>تقارير وإحصائيات شاملة</li>
+        </ul>
+      </div> 
+      <a href="safety_system.html" class="btn-enter" onclick="event.stopPropagation()">دخول نظام السلامة</a>
+    </div>
+  </div>
+
+<div class="footer">
+  <div class="footer-content">
+    <div class="footer-logo">🏛️</div>
+    <h3 class="footer-title">الكلية التقنية بحقل</h3>
+    <p class="footer-department">إدارة المرافق والصيانة</p>
+    <div class="footer-divider"></div>
+    <p class="footer-description">نظام موحد لإدارة الصيانة والسلامة والصحة المهنية</p>
+    <div class="footer-info">
+      <span class="footer-dev">👨‍💻 تم التطوير بواسطة: م. فهد صالح</span>
+      <span class="footer-position">وكيل ضبط الجودة</span>
+    </div>
+    <p class="footer-year">© 2025 جميع الحقوق محفوظة</p>
+  </div>
+</div>
+
+<script>
+// Preload pages for faster navigation
+window.addEventListener('load', function() {
+  const link1 = document.createElement('link');
+  link1.rel = 'prefetch';
+  link1.href = 'maintenance.html';
+  document.head.appendChild(link1);
+  
+  const link2 = document.createElement('link');
+  link2.rel = 'prefetch';
+  link2.href = 'safety.html';
+  document.head.appendChild(link2);
+});
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (e.key === '1') {
+    window.location.href = 'maintenance.html';
+  } else if (e.key === '2') {
+    window.location.href = 'safety.html';
+  }
+});
+</script>
+
+</body>
+</html>
